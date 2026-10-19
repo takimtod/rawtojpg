@@ -2,31 +2,7 @@ name: Convert RAW images
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - '**/*.[3][fF][rR]'
-      - '**/*.[aA][rR][wW]'
-      - '**/*.[cC][rR]2'
-      - '**/*.[cC][rR]3'
-      - '**/*.[dD][nN][gG]'
-      - '**/*.[eE][rR][fF]'
-      - '**/*.[fF][fF][fF]'
-      - '**/*.[iI][iI][qQ]'
-      - '**/*.[kK][dD][cC]'
-      - '**/*.[mM][eE][fF]'
-      - '**/*.[mM][oO][sS]'
-      - '**/*.[mM][rR][wW]'
-      - '**/*.[nN][eE][fF]'
-      - '**/*.[nN][rR][wW]'
-      - '**/*.[oO][rR][fF]'
-      - '**/*.[pP][eE][fF]'
-      - '**/*.[rR][aA][fF]'
-      - '**/*.[rR][aA][wW]'
-      - '**/*.[rR][wW]2'
-      - '**/*.[rR][wW][lL]'
-      - '**/*.[sS][rR]2'
-      - '**/*.[sS][rR][fF]'
-      - '**/*.[sS][rR][wW]'
+  push: {}
   schedule:
     - cron: '0 */4 * * *'
 
