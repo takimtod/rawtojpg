@@ -1,0 +1,53 @@
+name: Convert RAW images
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**/*.[3][fF][rR]'
+      - '**/*.[aA][rR][wW]'
+      - '**/*.[cC][rR]2'
+      - '**/*.[cC][rR]3'
+      - '**/*.[dD][nN][gG]'
+      - '**/*.[eE][rR][fF]'
+      - '**/*.[fF][fF][fF]'
+      - '**/*.[iI][iI][qQ]'
+      - '**/*.[kK][dD][cC]'
+      - '**/*.[mM][eE][fF]'
+      - '**/*.[mM][oO][sS]'
+      - '**/*.[mM][rR][wW]'
+      - '**/*.[nN][eE][fF]'
+      - '**/*.[nN][rR][wW]'
+      - '**/*.[oO][rR][fF]'
+      - '**/*.[pP][eE][fF]'
+      - '**/*.[rR][aA][fF]'
+      - '**/*.[rR][aA][wW]'
+      - '**/*.[rR][wW]2'
+      - '**/*.[rR][wW][lL]'
+      - '**/*.[sS][rR]2'
+      - '**/*.[sS][rR][fF]'
+      - '**/*.[sS][rR][wW]'
+  schedule:
+    - cron: '0 */4 * * *'
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Build converter image
+        run: docker build -t rawtojpg-converter .
+
+      - name: Convert RAW files
+        run: docker run --rm -v "$GITHUB_WORKSPACE:/github/workspace" rawtojpg-converter
+
+      - name: Upload JPG files
+        uses: actions/upload-artifact@v4
+        with:
+          name: converted-jpg
+          path: '**/*.jpg'
+          if-no-files-found: warn
