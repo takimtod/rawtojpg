@@ -1,7 +1,9 @@
 # rawtojpg
 
-## Konversi melalui GitHub Actions
+Aplikasi web untuk mengonversi file kamera RAW menjadi JPG. Jalankan server lokal dengan Go 1.22 atau lebih baru:
 
-Push file RAW yang didukung ke repository untuk menjalankan workflow konversi secara otomatis. Anda juga dapat menjalankannya dari tab **Actions** dengan memilih **Convert RAW images** lalu **Run workflow**. Hasil JPG tersedia sebagai artifact bernama `converted-jpg` pada halaman run tersebut.
+```sh
+go run .
+```
 
-Workflow memakai Git LFS saat checkout. File di atas 100 MB perlu disimpan dengan Git LFS, dan penggunaan LFS tetap tunduk pada kuota akun GitHub. GitHub Actions menjalankan konversi dan menyediakan hasil unduhan; workflow ini tidak meng-host aplikasi web Go.
+Buka `http://localhost:8080` di browser. File dikirim ke layanan iLoveIMG untuk diproses.
