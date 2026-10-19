@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
+	_ "embed"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -35,6 +36,9 @@ var (
 	}
 )
 
+//go:embed index.html
+var indexHTML []byte
+
 type pageConfig struct {
 	Token   string   `json:"token"`
 	Servers []string `json:"servers"`
@@ -58,7 +62,7 @@ func main() {
 			http.NotFound(w, r)
 			return
 		}
-		http.ServeFile(w, r, "index.html")
+		http.ServeContent(w, r, "index.html", time.Time{}, bytes.NewReader(indexHTML))
 	})
 	mux.HandleFunc("POST /api/convert", convertHandler)
 
