@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b17">
+  <title>RAW ke JPG | Ruang Gelap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17221d;
+      --muted: #68736d;
+      --paper: #f2f4ef;
+      --line: #d7ddd6;
+      --green: #c7f36a;
+      --deep: #101b17;
+      --orange: #ff8259;
+      font-family: "Manrope", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image: radial-gradient(#9ba79c 0.55px, transparent 0.55px);
+      background-size: 7px 7px;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .topbar {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 5vw, 74px);
+      border-bottom: 1px solid rgba(23, 34, 29, .15);
+      background: rgba(242, 244, 239, .92);
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; }
+    .brand-mark {
+      width: 30px; aspect-ratio: 1; display: grid; place-items: center;
+      border-radius: 9px; background: var(--green); color: var(--deep);
+    }
+    .brand-name { font-size: 14px; letter-spacing: 0; }
+    .top-note { color: var(--muted); font: 11px "DM Mono", monospace; letter-spacing: 0; }
+    main { width: min(1100px, calc(100% - 40px)); margin: 0 auto; padding: 68px 0 76px; }
+    .intro { display: grid; grid-template-columns: minmax(0, 1fr) 270px; align-items: end; gap: 32px; margin-bottom: 34px; }
+    .eyebrow { display: flex; align-items: center; gap: 9px; margin: 0 0 15px; color: #4b5c51; font: 11px "DM Mono", monospace; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 20px; height: 2px; background: #6f9138; }
+    h1 { max-width: 700px; margin: 0; font-size: clamp(38px, 5.2vw, 66px); line-height: 1.04; letter-spacing: 0; font-weight: 700; }
+    h1 span { color: #718f39; }
+    .intro-note { padding: 0 0 4px 17px; border-left: 1px solid #99a69a; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 270px; border: 1px solid #17221d; background: #fff; box-shadow: 8px 8px 0 var(--deep); }
+    .upload-pane { min-height: 390px; padding: 22px; }
+    .pane-head { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font: 10px "DM Mono", monospace; text-transform: uppercase; }
+    .step-number { color: #718f39; }
+    .dropzone {
+      min-height: 315px; margin-top: 17px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border: 1px dashed #98a59a; background: #f8faf6; cursor: pointer; text-align: center; transition: background .2s, border-color .2s;
+    }
+    .dropzone:hover, .dropzone.dragging { border-color: #718f39; background: #f0f7e4; }
+    .file-icon { width: 58px; height: 70px; margin-bottom: 20px; color: #536253; }
+    .drop-title { margin: 0 0 8px; font-size: 18px; font-weight: 700; }
+    .drop-copy { margin: 0; color: var(--muted); font-size: 12px; }
+    .browse { display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; padding: 11px 16px; border: 0; background: var(--deep); color: white; font-weight: 700; font-size: 12px; cursor: pointer; }
+    .browse:hover, .convert:hover:not(:disabled) { background: #32473a; }
+    .drop-foot { margin-top: 17px; color: #8a948c; font: 10px "DM Mono", monospace; }
+    .file-state { display: none; align-items: center; gap: 13px; width: min(420px, calc(100% - 36px)); padding: 15px; border: 1px solid var(--line); background: white; text-align: left; }
+    .file-state.visible { display: flex; }
+    .file-badge { flex: 0 0 42px; display: grid; place-items: center; height: 48px; background: #e8f0dc; color: #536c2f; font: 10px "DM Mono", monospace; }
+    .file-info { min-width: 0; flex: 1; }
+    .file-name { overflow: hidden; margin: 0 0 4px; font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .file-meta { margin: 0; color: var(--muted); font: 10px "DM Mono", monospace; }
+    .remove { width: 32px; height: 32px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 20px; }
+    .side-pane { display: flex; flex-direction: column; padding: 22px; border-left: 1px solid var(--line); background: #f8faf6; }
+    .side-title { margin: 0 0 24px; font: 10px "DM Mono", monospace; text-transform: uppercase; color: var(--muted); }
+    .setting { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
+    .setting:last-of-type { border-bottom: 1px solid var(--line); }
+    .setting-label { font-size: 12px; font-weight: 700; }
+    .setting-value { color: var(--muted); font: 10px "DM Mono", monospace; }
+    .resolution { display: flex; align-items: center; gap: 7px; color: #4b6b34; }
+    .resolution::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #86a943; }
+    .convert { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: auto; padding: 14px; border: 0; background: #bedf69; font-size: 12px; font-weight: 800; cursor: pointer; }
+    .convert:disabled { background: #dce1d8; color: #8b948d; cursor: not-allowed; }
+    .convert svg { width: 16px; height: 16px; }
+    .status { display: none; margin: 13px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .status.visible { display: block; }
+    .status.error { color: #b4442a; }
+    .progress { display: none; height: 3px; margin-top: 11px; overflow: hidden; background: #dfe4dd; }
+    .progress.visible { display: block; }
+    .progress span { display: block; width: 35%; height: 100%; background: #718f39; animation: travel 1.15s ease-in-out infinite alternate; }
+    @keyframes travel { from { transform: translateX(0); } to { transform: translateX(190%); } }
+    .privacy { display: flex; align-items: flex-start; gap: 12px; max-width: 800px; margin: 25px auto 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+    .privacy svg { flex: 0 0 17px; margin-top: 2px; }
+    .privacy strong { color: var(--ink); }
+    .bottom-line { display: flex; justify-content: space-between; gap: 18px; margin-top: 64px; padding-top: 15px; border-top: 1px solid rgba(23, 34, 29, .2); color: var(--muted); font: 10px "DM Mono", monospace; }
+    #file-input { display: none; }
+    @media (max-width: 760px) {
+      main { padding-top: 45px; }
+      .intro { grid-template-columns: 1fr; gap: 18px; }
+      .intro-note { max-width: 430px; }
+      .workspace { grid-template-columns: 1fr; }
+      .upload-pane { min-height: 340px; padding: 17px; }
+      .dropzone { min-height: 270px; }
+      .side-pane { min-height: 260px; border-left: 0; border-top: 1px solid var(--line); }
+    }
+    @media (max-width: 440px) {
+      .topbar { height: 60px; padding: 0 18px; }
+      .top-note { max-width: 120px; text-align: right; line-height: 1.5; }
+      main { width: calc(100% - 28px); padding-top: 38px; }
+      h1 { font-size: 40px; }
+      .drop-title { font-size: 16px; }
+      .bottom-line { flex-direction: column; margin-top: 44px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◩</span><span class="brand-name">RUANG GELAP</span></div>
+    <span class="top-note">WORKFLOW FOTO · RAW TO JPG</span>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">KONVERSI FILE KAMERA</p>
+        <h1 id="page-title">RAW ke <span>JPG</span></h1>
+      </div>
+      <p class="intro-note">Ubah file kamera menjadi JPG dengan dimensi asli. Tidak ada pengaturan resize atau pemotongan gambar.</p>
+    </section>
+
+    <section class="workspace" aria-label="Konverter RAW ke JPG">
+      <div class="upload-pane">
+        <div class="pane-head"><span>FILE SUMBER</span><span class="step-number">01 / 01</span></div>
+        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Pilih atau jatuhkan file RAW">
+          <svg class="file-icon" viewBox="0 0 56 68" fill="none" aria-hidden="true">
+            <path d="M8 2h25l15 15v44a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M33 3v15h14M13 31h30M13 39h30M13 47h18" stroke="currentColor" stroke-width="2"/>
+            <circle cx="38" cy="52" r="7" fill="#c7f36a" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <div id="empty-state">
+            <p class="drop-title">Letakkan file RAW di sini</p>
+            <p class="drop-copy">atau pilih dari perangkat Anda</p>
+            <button type="button" class="browse" id="browse-button">Pilih file <span aria-hidden="true">↗</span></button>
+            <p class="drop-foot">CR2 · CR3 · NEF · ARW · DNG · RAF · RW2 · ORF · PEF · SRW</p>
+          </div>
+          <div class="file-state" id="file-state">
+            <span class="file-badge" id="file-ext">RAW</span>
+            <div class="file-info"><p class="file-name" id="file-name"></p><p class="file-meta" id="file-size"></p></div>
+            <button type="button" class="remove" id="remove-button" aria-label="Hapus file">×</button>
+          </div>
+        </div>
+        <input id="file-input" type="file" accept=".arw,.cr2,.cr3,.dng,.nef,.nrw,.orf,.pef,.raf,.rw2,.srw">
+      </div>
+      <aside class="side-pane">
+        <p class="side-title">PENGATURAN HASIL</p>
+        <div class="setting"><span class="setting-label">Format</span><span class="setting-value">JPEG</span></div>
+        <div class="setting"><span class="setting-label">Resolusi</span><span class="setting-value resolution">Asli</span></div>
+        <div class="setting"><span class="setting-label">Ukuran maks.</span><span class="setting-value">200 MB</span></div>
+        <button type="button" class="convert" id="convert-button" disabled><span id="convert-label">Konversi ke JPG</span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="progress" id="progress"><span></span></div>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+      </aside>
+    </section>
+
+    <p class="privacy"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5 16 5v4.2c0 4-2.5 6.7-6 8.3-3.5-1.6-6-4.3-6-8.3V5l6-2.5Z" stroke="currentColor" stroke-width="1.4"/><path d="m7.5 9.8 1.7 1.7 3.4-3.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>File Anda diproses secara online.</strong> Untuk melakukan konversi, file RAW dikirim ke layanan iLoveIMG. Jangan unggah file yang bersifat sensitif.</span></p>
+    <footer class="bottom-line"><span>RAW → JPG / DIMENSI ASLI</span><span>UNTUK ALUR KERJA FOTOGRAFI</span></footer>
+  </main>
+  <script>
+    const supported = new Set(["arw", "cr2", "cr3", "dng", "nef", "nrw", "orf", "pef", "raf", "rw2", "srw"]);
+    const input = document.querySelector("#file-input");
+    const dropzone = document.querySelector("#dropzone");
+    const emptyState = document.querySelector("#empty-state");
+    const fileState = document.querySelector("#file-state");
+    const convertButton = document.querySelector("#convert-button");
+    const status = document.querySelector("#status");
+    const progress = document.querySelector("#progress");
+    let selectedFile = null;
+    let busy = false;
+
+    function humanSize(bytes) {
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    function setFile(file) {
+      if (!file) return;
+      const extension = file.name.split(".").pop().toLowerCase();
+      if (!supported.has(extension)) {
+        showStatus("Format file tidak didukung. Pilih file RAW dari kamera.", true);
+        return;
+      }
+      if (file.size > 200 * 1024 * 1024) {
+        showStatus("Ukuran file melebihi batas 200 MB.", true);
+        return;
+      }
+      selectedFile = file;
+      document.querySelector("#file-name").textContent = file.name;
+      document.querySelector("#file-size").textContent = `${humanSize(file.size)} · FILE RAW`;
+      document.querySelector("#file-ext").textContent = extension.toUpperCase();
+      emptyState.hidden = true;
+      fileState.classList.add("visible");
+      convertButton.disabled = busy;
+      hideStatus();
+    }
+
+    function clearFile() {
+      selectedFile = null;
+      input.value = "";
+      emptyState.hidden = false;
+      fileState.classList.remove("visible");
+      convertButton.disabled = true;
+      hideStatus();
+    }
+
+    function showStatus(message, isError = false) {
+      status.textContent = message;
+      status.classList.toggle("error", isError);
+      status.classList.add("visible");
+    }
+
+    function hideStatus() {
+      status.classList.remove("visible", "error");
+      progress.classList.remove("visible");
+    }
+
+    document.querySelector("#browse-button").addEventListener("click", () => input.click());
+    input.addEventListener("change", () => setFile(input.files[0]));
+    document.querySelector("#remove-button").addEventListener("click", clearFile);
+    dropzone.addEventListener("click", (event) => {
+      if (!event.target.closest("button") && !busy) input.click();
+    });
+    dropzone.addEventListener("keydown", (event) => {
+      if ((event.key === "Enter" || event.key === " ") && event.target === dropzone) {
+        event.preventDefault();
+        input.click();
+      }
+    });
+    for (const name of ["dragenter", "dragover"]) {
+      dropzone.addEventListener(name, (event) => {
+        event.preventDefault();
+        dropzone.classList.add("dragging");
+      });
+    }
+    for (const name of ["dragleave", "drop"]) {
+      dropzone.addEventListener(name, (event) => {
+        event.preventDefault();
+        dropzone.classList.remove("dragging");
+      });
+    }
+    dropzone.addEventListener("drop", (event) => setFile(event.dataTransfer.files[0]));
+
+    convertButton.addEventListener("click", async () => {
+      if (!selectedFile || busy) return;
+      busy = true;
+      convertButton.disabled = true;
+      document.querySelector("#convert-label").textContent = "Sedang mengonversi…";
+      progress.classList.add("visible");
+      showStatus("Mengirim file dan menunggu hasil JPG…");
+      try {
+        const form = new FormData();
+        form.append("file", selectedFile);
+        const response = await fetch("/api/convert", { method: "POST", body: form });
+        if (!response.ok) throw new Error((await response.text()).trim() || "Konversi gagal.");
+        const blob = await response.blob();
+        const outputName = `${selectedFile.name.replace(/\.[^.]+$/, "")}.jpg`;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = outputName;
+        link.click();
+        URL.revokeObjectURL(url);
+        showStatus("Selesai. JPG diunduh tanpa pengaturan resize.");
+      } catch (error) {
+        showStatus(error.message || "Konversi gagal. Coba lagi.", true);
+      } finally {
+        busy = false;
+        convertButton.disabled = !selectedFile;
+        document.querySelector("#convert-label").textContent = "Konversi ke JPG";
+        progress.classList.remove("visible");
+      }
+    });
+  </script>
+</body>
+</html>
