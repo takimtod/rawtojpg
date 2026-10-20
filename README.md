@@ -12,7 +12,7 @@ Browser mengunggah file dalam bagian 8 MiB agar file besar dapat melewati proxy 
 
 ## Deploy ke Vercel
 
-Vercel membatasi ukuran request ke Function, sehingga tidak cocok untuk endpoint ini yang menerima hingga 200 MiB. Gunakan server yang mengizinkan request sebesar itu, atau unggah file melalui layanan penyimpanan terpisah.
+Repository ini memiliki konfigurasi dasar Vercel untuk Go, tetapi batas ukuran request Vercel tidak cocok dengan bagian upload 8 MiB. Untuk penggunaan produksi, gunakan server yang mengizinkan ukuran tersebut atau ubah alur upload agar menggunakan penyimpanan terpisah.
 
 ## Nginx reverse proxy
 
