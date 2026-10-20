@@ -70,11 +70,13 @@
     .browse { display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; padding: 11px 16px; border: 0; background: var(--deep); color: white; font-weight: 700; font-size: 12px; cursor: pointer; }
     .browse:hover, .convert:hover:not(:disabled) { background: #32473a; }
     .drop-foot { margin-top: 17px; color: #8a948c; font: 10px "DM Mono", monospace; }
-    .file-state { display: none; align-items: center; gap: 13px; width: min(420px, calc(100% - 36px)); padding: 15px; border: 1px solid var(--line); background: white; text-align: left; }
+    .file-state { display: none; align-items: flex-start; gap: 13px; width: min(520px, calc(100% - 36px)); padding: 15px; border: 1px solid var(--line); background: white; text-align: left; }
     .file-state.visible { display: flex; }
     .file-badge { flex: 0 0 42px; display: grid; place-items: center; height: 48px; background: #e8f0dc; color: #536c2f; font: 10px "DM Mono", monospace; }
     .file-info { min-width: 0; flex: 1; }
-    .file-name { overflow: hidden; margin: 0 0 4px; font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .file-name { margin: 0 0 6px; font-size: 12px; font-weight: 700; }
+    .file-list { max-height: 105px; overflow: auto; margin: 0 0 6px; padding: 0; list-style: none; }
+    .file-list li { overflow: hidden; color: var(--muted); font: 10px "DM Mono", monospace; text-overflow: ellipsis; white-space: nowrap; }
     .file-meta { margin: 0; color: var(--muted); font: 10px "DM Mono", monospace; }
     .remove { width: 32px; height: 32px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 20px; }
     .side-pane { display: flex; flex-direction: column; padding: 22px; border-left: 1px solid var(--line); background: #f8faf6; }
@@ -138,7 +140,7 @@
 
     <section class="workspace" aria-label="Konverter RAW ke JPG">
       <div class="upload-pane">
-        <div class="pane-head"><span>FILE SUMBER</span><span class="step-number">01 / 01</span></div>
+        <div class="pane-head"><span>FILE SUMBER · MAKS. 20</span><span class="step-number">01 / 01</span></div>
         <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Pilih atau jatuhkan file RAW">
           <svg class="file-icon" viewBox="0 0 56 68" fill="none" aria-hidden="true">
             <path d="M8 2h25l15 15v44a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="2"/>
@@ -146,25 +148,25 @@
             <circle cx="38" cy="52" r="7" fill="#c7f36a" stroke="currentColor" stroke-width="2"/>
           </svg>
           <div id="empty-state">
-            <p class="drop-title">Letakkan file RAW di sini</p>
-            <p class="drop-copy">atau pilih dari perangkat Anda</p>
+            <p class="drop-title">Letakkan beberapa file RAW di sini</p>
+            <p class="drop-copy">atau pilih beberapa file dari perangkat Anda</p>
             <button type="button" class="browse" id="browse-button">Pilih file <span aria-hidden="true">↗</span></button>
             <p class="drop-foot">CR2 · CR3 · NEF · ARW · DNG · RAF · RW2 · ORF · PEF · SRW</p>
           </div>
           <div class="file-state" id="file-state">
             <span class="file-badge" id="file-ext">RAW</span>
-            <div class="file-info"><p class="file-name" id="file-name"></p><p class="file-meta" id="file-size"></p></div>
-            <button type="button" class="remove" id="remove-button" aria-label="Hapus file">×</button>
+            <div class="file-info"><p class="file-name" id="files-count"></p><ul class="file-list" id="file-list"></ul><p class="file-meta" id="file-size"></p></div>
+            <button type="button" class="remove" id="remove-button" aria-label="Hapus semua file">×</button>
           </div>
         </div>
-        <input id="file-input" type="file" accept=".arw,.cr2,.cr3,.dng,.nef,.nrw,.orf,.pef,.raf,.rw2,.srw">
+        <input id="file-input" type="file" accept=".arw,.cr2,.cr3,.dng,.nef,.nrw,.orf,.pef,.raf,.rw2,.srw" multiple>
       </div>
       <aside class="side-pane">
         <p class="side-title">PENGATURAN HASIL</p>
-        <div class="setting"><span class="setting-label">Format</span><span class="setting-value">JPEG</span></div>
+        <div class="setting"><span class="setting-label">Format</span><span class="setting-value" id="format-value">JPG</span></div>
         <div class="setting"><span class="setting-label">Resolusi</span><span class="setting-value resolution">Asli</span></div>
-        <div class="setting"><span class="setting-label">Ukuran maks.</span><span class="setting-value">200 MB</span></div>
-        <button type="button" class="convert" id="convert-button" disabled><span id="convert-label">Konversi ke JPG</span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="setting"><span class="setting-label">Ukuran maks.</span><span class="setting-value">200 MB total</span></div>
+        <button type="button" class="convert" id="convert-button" disabled><span id="convert-label">Konversi &amp; unduh JPG</span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="progress" id="progress"><span></span></div>
         <p class="status" id="status" role="status" aria-live="polite"></p>
       </aside>
@@ -182,7 +184,7 @@
     const convertButton = document.querySelector("#convert-button");
     const status = document.querySelector("#status");
     const progress = document.querySelector("#progress");
-    let selectedFile = null;
+    let selectedFiles = [];
     let busy = false;
 
     function humanSize(bytes) {
@@ -190,32 +192,60 @@
       return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
     }
 
-    function setFile(file) {
-      if (!file) return;
-      const extension = file.name.split(".").pop().toLowerCase();
-      if (!supported.has(extension)) {
-        showStatus("Format file tidak didukung. Pilih file RAW dari kamera.", true);
+    function updateDownloadOptions() {
+      const multipleFiles = selectedFiles.length > 1;
+      document.querySelector("#format-value").textContent = multipleFiles ? "JPG dalam ZIP" : "JPG";
+      document.querySelector("#convert-label").textContent = multipleFiles ? "Konversi & unduh ZIP" : "Konversi & unduh JPG";
+    }
+
+    function setFiles(fileList) {
+      const files = Array.from(fileList || []);
+      if (!files.length) return;
+      if (files.length > 20) {
+        showStatus("Maksimal 20 file RAW dapat dipilih sekaligus.", true);
         return;
       }
-      if (file.size > 200 * 1024 * 1024) {
-        showStatus("Ukuran file melebihi batas 200 MB.", true);
+      let totalSize = 0;
+      for (const file of files) {
+        const extension = file.name.split(".").pop().toLowerCase();
+        if (!supported.has(extension)) {
+          showStatus(`Format ${file.name} tidak didukung. Pilih file RAW dari kamera.`, true);
+          return;
+        }
+        if (file.size === 0 || file.size > 200 * 1024 * 1024) {
+          showStatus(`Ukuran ${file.name} kosong atau melebihi batas.`, true);
+          return;
+        }
+        totalSize += file.size;
+      }
+      if (totalSize > 200 * 1024 * 1024) {
+        showStatus("Total ukuran file melebihi batas 200 MB.", true);
         return;
       }
-      selectedFile = file;
-      document.querySelector("#file-name").textContent = file.name;
-      document.querySelector("#file-size").textContent = `${humanSize(file.size)} · FILE RAW`;
-      document.querySelector("#file-ext").textContent = extension.toUpperCase();
+      selectedFiles = files;
+      document.querySelector("#files-count").textContent = `${files.length} file dipilih`;
+      document.querySelector("#file-size").textContent = `${humanSize(totalSize)} · TOTAL RAW`;
+      document.querySelector("#file-ext").textContent = "RAW ×";
+      updateDownloadOptions();
+      const fileListElement = document.querySelector("#file-list");
+      fileListElement.replaceChildren(...files.map((file) => {
+        const item = document.createElement("li");
+        item.textContent = file.name;
+        return item;
+      }));
       emptyState.hidden = true;
       fileState.classList.add("visible");
-      convertButton.disabled = busy;
+      convertButton.disabled = busy || selectedFiles.length === 0;
       hideStatus();
     }
 
-    function clearFile() {
-      selectedFile = null;
+    function clearFiles() {
+      selectedFiles = [];
       input.value = "";
       emptyState.hidden = false;
       fileState.classList.remove("visible");
+      document.querySelector("#file-list").replaceChildren();
+      updateDownloadOptions();
       convertButton.disabled = true;
       hideStatus();
     }
@@ -232,8 +262,8 @@
     }
 
     document.querySelector("#browse-button").addEventListener("click", () => input.click());
-    input.addEventListener("change", () => setFile(input.files[0]));
-    document.querySelector("#remove-button").addEventListener("click", clearFile);
+    input.addEventListener("change", () => setFiles(input.files));
+    document.querySelector("#remove-button").addEventListener("click", clearFiles);
     dropzone.addEventListener("click", (event) => {
       if (!event.target.closest("button") && !busy) input.click();
     });
@@ -255,35 +285,76 @@
         dropzone.classList.remove("dragging");
       });
     }
-    dropzone.addEventListener("drop", (event) => setFile(event.dataTransfer.files[0]));
+    dropzone.addEventListener("drop", (event) => setFiles(event.dataTransfer.files));
 
     convertButton.addEventListener("click", async () => {
-      if (!selectedFile || busy) return;
+      if (!selectedFiles.length || busy) return;
       busy = true;
       convertButton.disabled = true;
-      document.querySelector("#convert-label").textContent = "Sedang mengonversi…";
+      document.querySelector("#convert-label").textContent = "Mengunggah file…";
       progress.classList.add("visible");
-      showStatus("Mengirim file dan menunggu hasil JPG…");
+      showStatus(`Menyiapkan ${selectedFiles.length} file untuk diunggah…`);
+      let uploadID = "";
       try {
-        const form = new FormData();
-        form.append("file", selectedFile);
-        const response = await fetch("/api/convert", { method: "POST", body: form });
+        const startResponse = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ files: selectedFiles.map(({ name, size }) => ({ name, size })) })
+        });
+        if (!startResponse.ok) throw new Error((await startResponse.text()).trim() || "Upload tidak dapat dimulai.");
+        const upload = await startResponse.json();
+        if (!upload.id || !Number.isInteger(upload.chunkSize) || upload.chunkSize <= 0) {
+          throw new Error("Respons awal upload tidak valid.");
+        }
+        uploadID = upload.id;
+
+        const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+        let uploadedSize = 0;
+        for (let index = 0; index < selectedFiles.length; index++) {
+          const file = selectedFiles[index];
+          for (let offset = 0; offset < file.size; offset += upload.chunkSize) {
+            const chunk = file.slice(offset, Math.min(offset + upload.chunkSize, file.size));
+            const response = await fetch(`/api/upload/${encodeURIComponent(upload.id)}/${index}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/octet-stream",
+                "X-Chunk-Offset": String(offset)
+              },
+              body: chunk
+            });
+            if (!response.ok) throw new Error((await response.text()).trim() || `Upload ${file.name} gagal.`);
+            uploadedSize += chunk.size;
+            showStatus(`Mengunggah ${humanSize(uploadedSize)} dari ${humanSize(totalSize)}…`);
+          }
+        }
+
+        document.querySelector("#convert-label").textContent = "Sedang mengonversi…";
+        showStatus("Upload selesai. Sedang mengonversi file…");
+        const response = await fetch(`/api/convert/${encodeURIComponent(upload.id)}`, { method: "POST" });
         if (!response.ok) throw new Error((await response.text()).trim() || "Konversi gagal.");
         const blob = await response.blob();
-        const outputName = `${selectedFile.name.replace(/\.[^.]+$/, "")}.jpg`;
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = outputName;
+        link.download = selectedFiles.length === 1
+          ? selectedFiles[0].name.replace(/\.[^.]+$/, ".jpg")
+          : "raw-to-jpg.zip";
         link.click();
-        URL.revokeObjectURL(url);
-        showStatus("Selesai. JPG diunduh tanpa pengaturan resize.");
+        clearFiles();
+        window.setTimeout(() => {
+          URL.revokeObjectURL(url);
+          window.location.reload();
+        }, 1000);
       } catch (error) {
+        if (uploadID) {
+          await fetch(`/api/upload/${encodeURIComponent(uploadID)}`, { method: "DELETE" })
+            .catch((cleanupError) => console.warn("Sesi upload tidak dapat dibersihkan:", cleanupError));
+        }
         showStatus(error.message || "Konversi gagal. Coba lagi.", true);
       } finally {
         busy = false;
-        convertButton.disabled = !selectedFile;
-        document.querySelector("#convert-label").textContent = "Konversi ke JPG";
+        convertButton.disabled = selectedFiles.length === 0;
+        updateDownloadOptions();
         progress.classList.remove("visible");
       }
     });
